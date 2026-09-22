@@ -26,8 +26,7 @@ class DatosHidrologicos:
 class DatosGeometricos:
     """Parametros geometricos del tramo."""
 
-    # Ancho de equilibrio / efectivo / adoptado a la superficie del agua (T)
-    ancho_adoptado: float = 25.0
+    ancho_fondo: float = 24.2
     talud_borde: float = 0.5
 
 
@@ -111,23 +110,32 @@ class DatosEntrada:
 
 
 @dataclass
-class ResultadoAnchoCauce:
-    """Resultados de los métodos de ancho estable."""
+class AnchosEquilibrio:
+    """Anchos de equilibrio por metodo (superficie o fondo)."""
 
     simons_henderson: float
     pettis: float
     altunin_manning: float
     blench: float
     recomendacion_practica: float
-    ancho_adoptado: float
+
+
+@dataclass
+class ResultadoAnchoCauce:
+    """Resultados de los metodos de ancho estable."""
+
+    equilibrio_superficie: AnchosEquilibrio
+    equilibrio_fondo: AnchosEquilibrio
+    ancho_fondo: float
+    ancho_efectivo: float
 
 
 @dataclass
 class ResultadoHidraulico:
     """Resultados hidraulicos del tramo."""
 
-    ancho_superficie: float
     ancho_fondo: float
+    ancho_efectivo: float
     tirante: float
     area_mojada: float
     perimetro_mojado: float

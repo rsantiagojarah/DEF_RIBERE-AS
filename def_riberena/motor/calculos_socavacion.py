@@ -53,8 +53,7 @@ def calcular_socavacion(
 ) -> ResultadoSocavacion:
     """Calcula la profundidad de socavación Hs."""
     caudal = datos.hidrologia.caudal_diseno
-    # Ancho efectivo = adoptado = superficie del agua (T)
-    ancho = datos.geometria.ancho_adoptado
+    ancho = hidraulica.ancho_efectivo
     tirante = hidraulica.tirante
     tirante_medio = hidraulica.profundidad_hidraulica
 
