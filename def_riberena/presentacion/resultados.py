@@ -40,7 +40,10 @@ class FasePresentacionResultados:
         print(f"  Sector:  {datos.proyecto.sector}")
         print(f"  Q diseno: {_formatear(datos.hidrologia.caudal_diseno)} m3/s")
         print(f"  S:        {_formatear(datos.hidrologia.pendiente, 5)} m/m")
-        print(f"  B adoptado: {_formatear(datos.geometria.ancho_adoptado)} m")
+        print(
+            f"  B adoptado/efectivo (superficie): "
+            f"{_formatear(datos.geometria.ancho_adoptado)} m"
+        )
 
     def _mostrar_ancho_cauce(self, datos: DatosEntrada, resultado: ResultadoCalculo) -> None:
         p = datos.ancho_cauce
@@ -57,7 +60,9 @@ class FasePresentacionResultados:
         print(f"  Altunin - Manning:  {_formatear(ancho.altunin_manning)} m")
         print(f"  Blench:             {_formatear(ancho.blench)} m")
         print(f"  Recomendación:      {_formatear(ancho.recomendacion_practica)} m")
-        print(f"  >> B adoptado:      {_formatear(ancho.ancho_adoptado)} m")
+        print(
+            f"  >> B adoptado (superficie): {_formatear(ancho.ancho_adoptado)} m"
+        )
 
     def _mostrar_rugosidad(self, datos: DatosEntrada) -> None:
         r = datos.rugosidad
@@ -70,6 +75,10 @@ class FasePresentacionResultados:
         h = resultado.hidraulica
         self._mostrar_rugosidad(datos)
         print("\n--- Calculo hidraulico ---")
+        print(
+            f"  B superficie (efectivo): {_formatear(h.ancho_superficie)} m"
+        )
+        print(f"  B fondo (calculado):     {_formatear(h.ancho_fondo)} m")
         print(f"  Tirante t:              {_formatear(h.tirante)} m")
         print(f"  Area mojada A:          {_formatear(h.area_mojada)} m2")
         print(f"  Perímetro mojado P:     {_formatear(h.perimetro_mojado)} m")

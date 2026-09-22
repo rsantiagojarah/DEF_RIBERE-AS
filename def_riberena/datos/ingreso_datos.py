@@ -352,7 +352,10 @@ class FaseIngresoDatos:
 
         print("\n--- Geometria del tramo ---")
         geometria = DatosGeometricos(
-            ancho_adoptado=_leer_numero("Ancho adoptado B (m)", defecto.geometria.ancho_adoptado),
+            ancho_adoptado=_leer_numero(
+                "Ancho adoptado/efectivo B a superficie del agua (m)",
+                defecto.geometria.ancho_adoptado,
+            ),
             talud_borde=_leer_numero("Talud de borde Z (H:V)", defecto.geometria.talud_borde),
         )
 

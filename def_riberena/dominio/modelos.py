@@ -24,8 +24,9 @@ class DatosHidrologicos:
 
 @dataclass
 class DatosGeometricos:
-    """Parámetros geométricos del tramo."""
+    """Parametros geometricos del tramo."""
 
+    # Ancho de equilibrio / efectivo / adoptado a la superficie del agua (T)
     ancho_adoptado: float = 25.0
     talud_borde: float = 0.5
 
@@ -123,8 +124,10 @@ class ResultadoAnchoCauce:
 
 @dataclass
 class ResultadoHidraulico:
-    """Resultados hidráulicos del tramo."""
+    """Resultados hidraulicos del tramo."""
 
+    ancho_superficie: float
+    ancho_fondo: float
     tirante: float
     area_mojada: float
     perimetro_mojado: float

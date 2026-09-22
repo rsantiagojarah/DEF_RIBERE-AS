@@ -1,4 +1,4 @@
-"""Cálculos hidráulicos: tirante, velocidad y bordo libre."""
+"""Calculos hidraulicos: tirante, velocidad y bordo libre."""
 
 import math
 
@@ -8,36 +8,41 @@ from def_riberena.datos.tablas import obtener_coeficiente_phi
 from def_riberena.motor.constantes import GRAVEDAD
 
 
+def calcular_ancho_fondo(ancho_superficie: float, tirante: float, talud: float) -> float:
+    """B_fondo = B_superficie - 2*Z*t."""
+    return max(ancho_superficie - 2.0 * talud * tirante, 0.0)
+
+
 def calcular_tirante_strickler(
     caudal: float,
     coeficiente_strickler: float,
-    ancho: float,
+    ancho_superficie: float,
     pendiente: float,
 ) -> float:
-    """t = (Q / (Ks * B * S^(1/2)))^(3/5)."""
-    denominador = coeficiente_strickler * ancho * math.sqrt(pendiente)
+    """t = (Q / (Ks * B_superficie * S^(1/2)))^(3/5)."""
+    denominador = coeficiente_strickler * ancho_superficie * math.sqrt(pendiente)
     return (caudal / denominador) ** (3.0 / 5.0)
 
 
 def calcular_geometria_trapezoidal(
-    ancho: float,
+    ancho_fondo: float,
+    ancho_superficie: float,
     tirante: float,
     talud: float,
 ) -> tuple[float, float, float, float]:
     """
-    Calcula geometria de seccion trapezoidal.
+    Calcula geometria trapezoidal a partir del ancho de fondo.
 
     Talud Z en formato H:V (horizontal : vertical).
-    A = (B + Z*t) * t
-    P = B + 2*t*sqrt(1 + Z^2)
-    y = A / T,  con T = B + 2*Z*t
+    A = (B_fondo + Z*t) * t
+    P = B_fondo + 2*t*sqrt(1 + Z^2)
+    y = A / B_superficie
     R = A / P
     """
-    area = (ancho + talud * tirante) * tirante
-    perimetro = ancho + 2.0 * tirante * math.sqrt(1.0 + talud ** 2)
-    ancho_superficial = ancho + 2.0 * talud * tirante
+    area = (ancho_fondo + talud * tirante) * tirante
+    perimetro = ancho_fondo + 2.0 * tirante * math.sqrt(1.0 + talud ** 2)
     radio = area / perimetro if perimetro > 0 else 0.0
-    profundidad_hidraulica = area / ancho_superficial if ancho_superficial > 0 else tirante
+    profundidad_hidraulica = area / ancho_superficie if ancho_superficie > 0 else tirante
     return area, perimetro, radio, profundidad_hidraulica
 
 
@@ -47,7 +52,7 @@ def calcular_velocidad_manning(radio: float, pendiente: float, coeficiente_manni
 
 
 def clasificar_flujo(numero_froude: float) -> TipoFlujo:
-    """Clasifica el régimen según el número de Froude."""
+    """Clasifica el regimen segun el numero de Froude."""
     if numero_froude < 0.95:
         return TipoFlujo.SUBCRITICO
     if numero_froude <= 1.05:
@@ -56,21 +61,25 @@ def clasificar_flujo(numero_froude: float) -> TipoFlujo:
 
 
 def calcular_hidraulica(datos: DatosEntrada) -> ResultadoHidraulico:
-    """Ejecuta el cálculo hidráulico completo del tramo."""
+    """Ejecuta el calculo hidraulico completo del tramo."""
     caudal = datos.hidrologia.caudal_diseno
     pendiente = datos.hidrologia.pendiente
-    ancho = datos.geometria.ancho_adoptado
+    ancho_superficie = datos.geometria.ancho_adoptado
     talud = datos.geometria.talud_borde
 
     tirante = calcular_tirante_strickler(
         caudal,
         datos.rugosidad.coeficiente_strickler,
-        ancho,
+        ancho_superficie,
         pendiente,
     )
 
+    ancho_fondo = calcular_ancho_fondo(ancho_superficie, tirante, talud)
     area, perimetro, radio, profundidad_hidraulica = calcular_geometria_trapezoidal(
-        ancho, tirante, talud
+        ancho_fondo,
+        ancho_superficie,
+        tirante,
+        talud,
     )
     velocidad = calcular_velocidad_manning(radio, pendiente, datos.rugosidad.coeficiente_manning)
 
@@ -81,6 +90,8 @@ def calcular_hidraulica(datos: DatosEntrada) -> ResultadoHidraulico:
     altura_muro = tirante + bordo_libre
 
     return ResultadoHidraulico(
+        ancho_superficie=ancho_superficie,
+        ancho_fondo=ancho_fondo,
         tirante=tirante,
         area_mojada=area,
         perimetro_mojado=perimetro,

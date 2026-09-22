@@ -77,7 +77,7 @@ Corresponden al caso de la memoria de cálculo:
 | Sección | RIO CHAUPIHURANGA |
 | Caudal de diseño Q | 147.20 m³/s |
 | Pendiente S | 0.09 m/m |
-| Ancho adoptado B | 25.00 m |
+| Ancho adoptado/efectivo B (superficie del agua) | 25.00 m |
 | Periodo de retorno | 100 años |
 | Diámetro medio Dm | 50 mm (suelo no cohesivo) |
 | Tipo de cauce | Cauces naturales con derrubio e irregularidades |
