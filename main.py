@@ -16,8 +16,11 @@ if sys.platform == "win32":
     sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding="utf-8", errors="replace")
 
 from def_riberena.datos.ingreso_datos import FaseIngresoDatos
+from def_riberena.datos.ingreso_torrentera import ingresar_datos_torrentera
+from def_riberena.motor.calculo_torrentera import calcular_torrentera
 from def_riberena.motor.motor_calculo import MotorCalculoEnrocado
 from def_riberena.presentacion.resultados import FasePresentacionResultados
+from def_riberena.presentacion.resultado_torrentera import mostrar_resultado_torrentera
 
 
 def mostrar_menu() -> str:
@@ -28,7 +31,8 @@ def mostrar_menu() -> str:
     print("=" * 60)
     print("\n  1) Cálculo con valores de la memoria (Chaupihuranga)")
     print("  2) Cálculo con ingreso manual de datos")
-    print("  3) Salir")
+    print("  3) Torrentera recta: D50, enrocado y uña enterrada")
+    print("  4) Salir")
     return input("\n  Seleccione una opción [1]: ").strip() or "1"
 
 
@@ -49,6 +53,16 @@ def ejecutar_calculo(usar_defectos: bool) -> None:
     fase_presentacion.ejecutar(datos, resultado)
 
 
+def ejecutar_calculo_torrentera() -> None:
+    """Ejecuta el calculo de D50, enrocado y uña para una torrentera recta."""
+    datos = ingresar_datos_torrentera()
+    print("\n" + "=" * 60)
+    print("  EJECUTANDO CALCULO DE TORRENTERA...")
+    print("=" * 60)
+    resultado = calcular_torrentera(datos)
+    mostrar_resultado_torrentera(datos, resultado)
+
+
 def main() -> None:
     """Punto de entrada de la aplicación."""
     while True:
@@ -59,6 +73,8 @@ def main() -> None:
         elif opcion == "2":
             ejecutar_calculo(usar_defectos=False)
         elif opcion == "3":
+            ejecutar_calculo_torrentera()
+        elif opcion == "4":
             print("\n  Hasta pronto.\n")
             sys.exit(0)
         else:
